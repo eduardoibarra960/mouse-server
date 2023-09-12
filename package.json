@@ -2,7 +2,9 @@
   "name": "mouse-server",
   "version": "1.0.0",
   "description": "Servidor de mouse",
-  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
