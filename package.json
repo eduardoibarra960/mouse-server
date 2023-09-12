@@ -12,5 +12,6 @@
     "country"
   ],
   "author": "Eduardo Ibarra <eduardo960GM@gmail.com> (https://www.comunidadgm.org/)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": { "socket.io" : "0.8.5" }
 }
