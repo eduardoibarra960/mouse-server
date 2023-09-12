@@ -1,0 +1,68 @@
+<html>
+<head>
+  <style>
+    /* Estilos para la tabla */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Posición del mouse de los usuarios conectados</h1>
+  <table id="table">
+    <tr>
+      <th>Usuario</th>
+      <th>X</th>
+      <th>Y</th>
+    </tr>
+  </table>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Creamos un objeto socket.io para conectarnos al servidor
+    var socket = io();
+
+    // Obtenemos una referencia a la tabla del documento
+    var table = document.getElementById("table");
+
+    // Escuchamos el evento 'updateTable' que se dispara cuando el servidor envía el arreglo de posiciones del mouse
+    socket.on('updateTable', function(data) {
+      // Limpiamos la tabla, dejando solo la fila de encabezados
+      while (table.rows.length > 1) {
+        table.deleteRow(1);
+      }
+
+      // Recorremos el arreglo de posiciones del mouse
+      for (var clientId in data) {
+        // Obtenemos la posición del mouse del cliente actual
+        var position = data[clientId];
+
+        // Creamos una nueva fila en la tabla con los datos del cliente
+        var row = table.insertRow(-1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        cell1.innerHTML = clientId;
+        cell2.innerHTML = position.x;
+        cell3.innerHTML = position.y;
+      }
+    });
+
+    // Agregamos un evento al documento para detectar cuando el usuario mueve el mouse
+    document.addEventListener("mousemove", function(event) {
+      // Obtenemos las coordenadas del mouse relativas al documento
+      var x = event.pageX;
+      var y = event.pageY;
+
+      // Emitimos el evento 'mouseMove' al servidor con las coordenadas del mouse
+      socket.emit('mouseMove', {x: x, y: y});
+    });
+  </script>
+</body>
+</html>
