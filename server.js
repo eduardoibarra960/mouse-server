@@ -16,7 +16,7 @@ var server = http.createServer(function(req, res) {
 });
 
 // Escuchamos en el puerto 3000
-server.listen(3000, function() {
+server.listen(process.env.PORT || 3000, function() {
   console.log('Servidor escuchando en el puerto 3000');
 });
 
