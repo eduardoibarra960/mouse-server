@@ -4,9 +4,6 @@
   "description": "Servidor de mouse",
   "scripts": {
     "start": "node server.js"
-  }
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "ip",
