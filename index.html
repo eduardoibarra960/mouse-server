@@ -15,7 +15,7 @@
   </style>
 </head>
 <body>
-  <h1>Posición del mouse de los usuarios conectados</h1>
+  <h1>Posicion del mouse de los usuarios conectados</h1>
   <table id="table">
     <tr>
       <th>Usuario</th>
@@ -27,35 +27,56 @@
   <script>
     // Creamos un objeto socket.io para conectarnos al servidor
     var socket = io();
-
+	var cursorArray = [];
+	var cursorB64 = "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAACXBIWXMAAAsTAAALEwEAmpwYAAABbklEQVRIib3WP0scQRjH8c9KjLWgJE0somia5F0Ejig2eQFpcuArCCSVrbUaJMFOsLHwiMFKxHSSRoOlld3VATExuCl2Fjebu5u9Y+8eWOYZdub35fnNHyZJ09QoYmwkFEjTtOuHt5ioQzfpZV2SJFe4xrNBQMWIWXeKBXzpF1SOGOgutEs4HCZoUmbdNhr4OjApshm+4U8YuoYUrUF0Y6DjIJ7HZugfDAs0XtDYqgIbFPSgpPNRxMa6QLDeq7I6Qdyv2X/nrG4QbIQx+8MGQVNpzcpaMYFuMS07zI/xCLf4hWV8l90k7eKEqqCkkD8P7Y8O49p4gpfY+edPnwf2rNDfDfkKXmCql24MdIIbzOAiCKd4k+vhUycL+gW1ZN7ngKZsDfKq3oV8PgaK3d4/8TDkr/AZH0J/Fb9DvhfRiVZ0KdtRc6Vp54Uqj7AY042B3neAwGuZhY2qBcRAs110nrrfEJVAPR8ndcbI3nV/AbLwSlu/m8RDAAAAAElFTkSuQmCC";
+	
     // Obtenemos una referencia a la tabla del documento
     var table = document.getElementById("table");
-
+	
     // Escuchamos el evento 'updateTable' que se dispara cuando el servidor envía el arreglo de posiciones del mouse
     socket.on('updateTable', function(data) {
       // Limpiamos la tabla, dejando solo la fila de encabezados
       while (table.rows.length > 1) {
         table.deleteRow(1);
       }
-
+	  
+	  data = JSON.parse(data);
       // Recorremos el arreglo de posiciones del mouse
+	  
       for (var clientId in data) {
-        console.log(clientId);
+		
+		
         // Obtenemos la posición del mouse del cliente actual
-        var position = data[clientId];
-
+        var position = data[clientId][1];
+		
         // Creamos una nueva fila en la tabla con los datos del cliente
         var row = table.insertRow(-1);
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
-        cell1.innerHTML = clientId;
+        cell1.innerHTML = data[clientId][0];
         cell2.innerHTML = position.x;
         cell3.innerHTML = position.y;
+		if (cursorArray[clientId] == undefined)
+		{
+			var img = document.createElement("img");
+			/*img.onload = function(e) {
+				var container = document.getElementById("imageContainer");
+				container.appendChild(e.target);
+			}*/
+			img.setAttribute("src", cursorB64);
+			img.setAttribute("style","position:fixed; top: 0; left: 0");
+			
+			cursorArray[clientId] = img;
+			document.body.appendChild(cursorArray[clientId]);
+		}
+		else
+		{
+			cursorArray[clientId].setAttribute("style","position:fixed; top: " + position.y + "; left: " + position.x + ";");
+		}
       }
-      console.log("---");
     });
-
+	
     // Agregamos un evento al documento para detectar cuando el usuario mueve el mouse
     document.addEventListener("mousemove", function(event) {
       // Obtenemos las coordenadas del mouse relativas al documento
