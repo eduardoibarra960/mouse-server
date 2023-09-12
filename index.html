@@ -40,6 +40,7 @@
 
       // Recorremos el arreglo de posiciones del mouse
       for (var clientId in data) {
+        console.log(clientId);
         // Obtenemos la posición del mouse del cliente actual
         var position = data[clientId];
 
@@ -52,6 +53,7 @@
         cell2.innerHTML = position.x;
         cell3.innerHTML = position.y;
       }
+      console.log("---");
     });
 
     // Agregamos un evento al documento para detectar cuando el usuario mueve el mouse
