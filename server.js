@@ -24,22 +24,23 @@ server.listen(process.env.PORT || 3000, function() {
 var io = socketio(server);
 
 // Creamos un arreglo para almacenar la posición del mouse de cada cliente
-var mousePositions = [];
+var mousePositions = new Map();
 
 // Escuchamos el evento 'connection' que se dispara cuando un cliente se conecta
 io.on('connection', function(socket) {
-  console.log('Un cliente se ha conectado');
+  
 
   // Asignamos un identificador único al cliente
   var clientId = socket.id;
+  console.log('Un cliente se ha conectado y le asignamos el identificador ' + clientId);
 
   // Escuchamos el evento 'mouseMove' que se dispara cuando el cliente mueve el mouse
   socket.on('mouseMove', function(data) {
     // Actualizamos la posición del mouse del cliente en el arreglo
-    mousePositions[clientId] = data;
-
+	mousePositions.set(clientId, data);
+	
     // Emitimos el evento 'updateTable' a todos los clientes con el arreglo actualizado
-    io.emit('updateTable', mousePositions);
+    io.emit('updateTable', JSON.stringify(Array.from(mousePositions.entries())));
   });
 
   // Escuchamos el evento 'disconnect' que se dispara cuando el cliente se desconecta
@@ -47,7 +48,7 @@ io.on('connection', function(socket) {
     console.log('Un cliente se ha desconectado');
 
     // Eliminamos la posición del mouse del cliente del arreglo
-    delete mousePositions[clientId];
+    mousePositions.delete(clientId);
 
     // Emitimos el evento 'updateTable' a todos los clientes con el arreglo actualizado
     io.emit('updateTable', mousePositions);
